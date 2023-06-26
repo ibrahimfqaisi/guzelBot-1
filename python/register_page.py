@@ -1,7 +1,14 @@
 from tkinter import *
 import login2
 from PIL import ImageTk, Image
+from signup_page import signup
 
+'''
+Sajeda
+Ibrahim
+Bayan 
+Aseel
+'''
 
 window = None
 def destroy_signup_page():
@@ -275,7 +282,8 @@ def regestier():
         relief="flat",
         activebackground="#272A37",
         cursor="hand2",
-        bg='#272A37'
+        bg='#272A37',
+        command=lambda:signup(firstName_entry,lastName_entry,emailName_entry,passwordName_entry)
     )
     submit_button .place(x=200, y=470, width=150, height=50)
 

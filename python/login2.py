@@ -8,7 +8,33 @@ from tkinter import Button, messagebox
 import psycopg2
 import hashlib
 import reset_page
+'''
+Sajeda
+Ibrahim
+Bayan 
+Aseel
+'''
 
+def show_custom_error(title, message):
+    global win
+    win = Toplevel()
+    
+    window_width = 350
+    window_height = 150
+    screen_width = win.winfo_screenwidth()
+    screen_height = win.winfo_screenheight()
+    position_top = int(screen_height / 4 - window_height / 4)
+    position_right = int(screen_width / 2 - window_width / 2)
+    win.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
+    win.title(title)
+    win.configure(background="#272A37")
+    win.resizable(False, False)
+
+    label = Label(win, text=message, fg="white", bg="#272A37")
+    label.pack(pady=20)
+
+    ok_button = Button(win, text="OK", command=win.destroy)
+    ok_button.pack(pady=10)
 def login():
     # Implement the login functionality here
     email = Login_emailName_entry.get()
@@ -24,22 +50,30 @@ def login():
     user = cursor.fetchone()
 
     if user:
-        # Hash the entered password
-        entered_password_hash = hashlib.sha256(password.encode()).hexdigest()
+            # Hash the entered password
+            entered_password_hash = hashlib.sha256(password.encode()).hexdigest()
 
-        # Compare the hashed passwords
-        if entered_password_hash == user[4]:  # Assuming the password hash is stored in column index 4
-            
-            destroy_login()
-            os.system("python python\\chat.py")
-            
-        else:
-            messagebox.showerror("Login Failed", "Invalid Password")
+            # Compare the hashed passwords
+            if entered_password_hash == user[3]:  # Assuming the password hash is stored in column index 4
+       
+                file_path = 'userinfo.txt'
+
+                # Save the JSON data to a file
+                with open(file_path, 'w+') as json_file:
+                    json_file.write(f"{user[1]},{user[0]}")                                
+                destroy_login()
+                os.system("python python\\chat.py")
+                
+            else:
+                invalid_password_message = "Invalid Password"
+                show_custom_error("Login Failed", invalid_password_message)
     else:
-        messagebox.showerror("Login Failed", "Invalid Email")
+        # messagebox.showerror("Login Failed", "Invalid Email")
+        invalid_password_message = "Invalid Email"
+        show_custom_error("Login Failed", invalid_password_message)
 
-    # Close the connection
-    conn.close()
+        # Close the connection
+        conn.close()
 
 window = None
 
@@ -254,23 +288,19 @@ def loginpage ():
                             font=("yu gothic ui", 11, 'bold'))
         email_label3.place(x=40, y=50)
 
-        # ====  New Password ==================
-        new_password_entry = Entry(win, bg="#3D404B", font=("yu gothic ui semibold", 12), show='•', highlightthickness=1,
-                                bd=0)
-        new_password_entry.place(x=40, y=180, width=256, height=50)
-        new_password_entry.config(highlightbackground="#3D404B", highlightcolor="#206DB4")
-        new_password_label = Label(win, text='• New Password', fg="#FFFFFF", bg='#272A37',
-                                font=("yu gothic ui", 11, 'bold'))
-        new_password_label.place(x=40, y=150)
-
-        # ======= Update password Button ============
         update_pass = Button(win, fg='#f8f8f8', text='Update Password', bg='#ff6c38', font=("yu gothic ui", 12, "bold"),
                             cursor='hand2', relief="flat", bd=0, highlightthickness=0, activebackground="#1D90F5",
-                            command=lambda:reset_page.reset_password(email_entry3))
+                            command=lambda:destroy_resset(email_entry3))
         update_pass.place(x=40, y=260, width=256, height=45)
+        # window.destroy()
+
+        def destroy_resset(email_entrey):
+            reset_page.reset_password(email_entrey)
+            win.destroy()
 
 
     window.resizable(False, False)
+    
 
 
     window.mainloop()

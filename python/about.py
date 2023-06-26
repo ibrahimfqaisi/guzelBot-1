@@ -2,6 +2,10 @@ from tkinter import *
 from PIL import ImageTk, Image
 import os
 
+'''
+Firas
+Sajeda
+'''
 
 class FirstPage:
     def __init__(self, dashboard_window):

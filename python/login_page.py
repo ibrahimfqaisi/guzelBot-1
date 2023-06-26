@@ -4,6 +4,12 @@ from tkinter import Button, messagebox
 import psycopg2
 import hashlib
 
+'''
+Ibrahim
+Bayan 
+Aseel
+'''
+
 def login():
     # Implement the login functionality here
     email = login_email_entry.get()
@@ -23,7 +29,7 @@ def login():
         entered_password_hash = hashlib.sha256(password.encode()).hexdigest()
 
         # Compare the hashed passwords
-        if entered_password_hash == user[4]:  # Assuming the password hash is stored in column index 4
+        if entered_password_hash == user[3]:  # Assuming the password hash is stored in column index 4
             messagebox.showinfo("Login Successful", f"Welcome, {user[1]}!")
         else:
             messagebox.showerror("Login Failed", "Invalid Password")
