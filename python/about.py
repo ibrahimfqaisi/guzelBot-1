@@ -1,11 +1,12 @@
 from tkinter import *
-from PIL import ImageTk, Image
+from PIL import ImageTk, Image, ImageDraw
+from tkinter import messagebox
 import os
+from face_register import App
+import about
+import login2
 
-'''
-Firas
-Sajeda
-'''
+
 
 class FirstPage:
     def __init__(self, dashboard_window):
@@ -21,11 +22,9 @@ class FirstPage:
         x = (screen_width/2)-(app_width/2)
         y = (screen_height/160)-(app_height/160)
         dashboard_window.geometry(f"{app_width}x{app_height}+{int(x)}+{int(y)}")
+        dashboard_window.title('About us')
 
-        # window Icon
-        icon = PhotoImage(file='python\\images3\\1.png')
-        dashboard_window.iconphoto(True, icon)
-        dashboard_window.title('Welcome')
+
 
         # Navigating through windows
         homepage = Frame(dashboard_window)
@@ -44,97 +43,144 @@ class FirstPage:
         # ======================================================================================
         homepage.config(background='#525561')
 
-        # ====== MENU BAR ==========
-
-        home_bgImg = Image.open('python\\assets\\image_1.png')
-        home_bgImg = home_bgImg.resize((1340, 690))
+        home_bgImg = Image.open('python\\new\\aboutbg.png')
+        home_bgImg = home_bgImg.resize((1300, 690))
 
         photo = ImageTk.PhotoImage(home_bgImg)
-        home_bg = Label(homepage, image=photo, bg='#525561')
+        home_bg = Label(homepage, image=photo, )
         home_bg.image = photo
         home_bg.place(x=-10, y=-10)
 
-        heading2 = Label(homepage, text='TEAM GUZEL BOT', bg='#272A37', fg='#ff6c38', font=("", 30, "bold"))
-        heading2.place(x=250, y=195)
+        # ====== MENU BAR ==========
 
 
- 
-
-        def home():
+        def faceId():
+            dashboard_window.destroy()
+            app = App()
+            app.start() 
+            page()
+                
+        def delet_info():
             dashboard_window.withdraw()
-            os.system("python Dashboard.py")
+            file_path = 'userinfo.txt'
+            os.remove(file_path)
+            os.system("python python\\Dashboard.py")
+            os.system("python python/chat.py")
             dashboard_window.destroy()
 
-        # ========== HOME BUTTON =======
-        home_button = Button(homepage, text='Home', bg='#272A37', font=("", 20, "bold"), bd=0, fg='white',
-                             cursor='hand2', activebackground='#fd6a36', activeforeground='white',command=home)
-        home_button.place(x=150, y=100)
-        def chat():
+        def Dashboard():
             dashboard_window.withdraw()
-            os.system("python chat.py")
+            file_path = 'userinfo.txt'
+            os.remove(file_path)
+            os.system("python python\\Dashboard.py")
             dashboard_window.destroy()
-        # ========== chat BUTTON =======
-        chat_button = Button(homepage, text='chat', bg='#272A37', font=("", 20, "bold"), bd=0, fg='white',
-                               cursor='hand2', activebackground='#fd6a36', activeforeground='#7a7a7a',command=chat
-                               )
-        chat_button.place(x=250, y=100)
+
+        def delet_info():
+            dashboard_window.withdraw()
+            file_path = 'userinfo.txt'
+            os.remove(file_path)
+            os.system("python python\\Dashboard.py")
+            os.system("python python/chat.py")
+            dashboard_window.destroy()
 
         def about():
             dashboard_window.withdraw()
-            os.system("python about.py")
+            os.system("python python\\about.py")
+            dashboard_window.destroy()
+        def chat():
+            dashboard_window.withdraw()
+            os.system("python python\\chat.py")
             dashboard_window.destroy()
 
-        # ========== about  BUTTON =======
-        about_button = Button(homepage, text='About us', bg='#272A37', font=("", 20, "bold"), bd=0, fg='white',
-                                cursor='hand2', activebackground='#fd6a36', activeforeground='#7a7a7a',
-                                command=about)
-        about_button.place(x=350, y=100)
-
-
-        def logout():
+        def home():
             dashboard_window.withdraw()
+            os.system("python python\\home.py")
+            dashboard_window.destroy()
+
+
+        home_bgImg1 = Image.open('python\\new\\homentn.png')
+        home_bgImg1= home_bgImg1.resize((130, 46))
+        photo2 = ImageTk.PhotoImage(home_bgImg1)
+        home_bg1 = Label(homepage, image=photo2, )
+        home_bg1.image = photo2
+
+        home_bgImg2 = Image.open('python\\new\\chatbtn.png')
+        home_bgImg2= home_bgImg2.resize((130, 46))
+        photo3 = ImageTk.PhotoImage(home_bgImg2)
+        home_bg2 = Label(homepage, image=photo3, )
+        home_bg2.image = photo3
+
+
+        home_bgImg3 = Image.open('python\\new\\facid.png')
+        home_bgImg2= home_bgImg2.resize((90,37))
+        photo4 = ImageTk.PhotoImage(home_bgImg3)
+        home_bg3 = Label(homepage, image=photo4, )
+        home_bg3.image = photo4
+
+        home_bgImg4 = Image.open('python\\new\\aboutbtn.png')
+        home_bgImg2= home_bgImg2.resize((90,37))
+        photo5 = ImageTk.PhotoImage(home_bgImg4)
+        home_bg4 = Label(homepage, image=photo5, )
+        home_bg4.image = photo5
+
+        home_bgImg5 = Image.open('python\\new\\logout.png')
+        home_bgImg2= home_bgImg2.resize((90, 37))
+        photo6 = ImageTk.PhotoImage(home_bgImg5)
+        home_bg5 = Label(homepage, image=photo6, )
+        home_bg5.image = photo6
+
+
+
+        # ========== HOME BUTTON =======
+        home_button = Button(
+            homepage, 
+            image=photo2, 
+            borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat",
+            command=home)
+        home_button.place(x=140, y=50)
+
+
+        # ========== chat BUTTON =======
+        chat_button = Button(
+            homepage, 
+            image=photo3,
+            borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat" ,
+            command=chat
+                    )
+        chat_button.place(x=300, y=50)
+
+
+
+         # ========== face  BUTTON =======
+        face_button = Button(homepage,image=photo4 , borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat" ,command=faceId)
+        face_button.place(x=765, y=50)
+
+        # ========== about  BUTTON =======
+        about_button = Button(
+            homepage, 
+            image=photo5,
+            borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat" )
+        about_button.place(x=460, y=50)
+
         # ========== LOG OUT =======
-        logout_button = Button(homepage, text='Logout', bg='#272A37', font=("", 20, "bold"), bd=0, fg='white',
-                               cursor='hand2', activebackground='#fd6a36', activeforeground='#7a7a7a',command=logout)
-        logout_button.place(x=500, y=100)
-
-        # Image paths and names for the cards
-        card_data = [
-        {"name": "ibrhem", "links": "https://github.com/", "image": "team\ibra.jpg"},
-        {"name": "bayan", "links": "https://github.com/", "image": "team\\bayan.jpg"},
-        {"name": "mhmad", "links": "https://github.com/", "image": "team\mha.jpg"},
-        {"name": "sajeda", "links": "https://github.com/", "image": "team\sajeda.jpg"},
-        {"name": "aseel", "links": "https://github.com/", "image": "team\\aseel.jpg"},
-        {"name": "firas", "links": "https://github.com/", "image": "team\\firas.jpg"}
-        ]
-
-        def display_cards():
-            x = 100  # Initial x-coordinate for the cards
-
-            for data in card_data:
-                # Load the image
-                image = Image.open(data['image'])
-                # Resize the image if necessary
-                image = image.resize((120, 150))
-                # Create a PhotoImage from the image
-                photo = ImageTk.PhotoImage(image)
-
-                # Create the label to display the image
-                image_label = Label(homepage, image=photo, bg='#525561')
-                image_label.image = photo  # Store a reference to the image
-                image_label.place(x=x, y=300)
-
-                # Create the label to display the name
-                name_label = Label(homepage, text=data['name'], bg='#272A37', fg='white', font=("", 12))
-                name_label.place(x=x, y=470)
-
-
-                name_label = Label(homepage, text=data['links'], bg='#272A37', fg='white', font=("", 12))
-                name_label.place(x=x, y=500)
-
-                x += 200  # Increment the x-coordinate for the next card
-
-        display_cards()
+        logout_button = Button(homepage,  image=photo6,
+            borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat" , command=delet_info)
+        logout_button.place(x=1000, y=50)
 
 def page():
     window = Tk()

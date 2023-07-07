@@ -1,25 +1,28 @@
+import colorama
+from colorama import Fore, Style, Back
 import speech_recognition as sr
 
-def main():
-    '''
-    Aseel Bdoor
-    '''
+def listen():
     r = sr.Recognizer()
- 
     with sr.Microphone() as source:
-        r.adjust_for_ambient_noise(source)
-        # print("Please say something")
+        print(Fore.LIGHTBLUE_EX + "Speak:" + Style.RESET_ALL, end="")
         audio = r.listen(source)
-        # print("Recognizing Now .... ")
 
-        # recognize speech using google
-        try:
-            text=r.recognize_google(audio)
-            return text
- 
-        except Exception as e:
-            return "I dont here you very well"
+    try:
+        print(Fore.LIGHTBLUE_EX + "User: " + Style.RESET_ALL, end="")
+        text = r.recognize_google(audio)
+        print(text)
+        return text.lower()
+    except sr.UnknownValueError:
+        print(Fore.LIGHTBLUE_EX + "User: " + Style.RESET_ALL + "Sorry, I didn't understand that.")
+        return ""
+    except sr.RequestError as e:
+        print(Fore.LIGHTBLUE_EX + "User: " + Style.RESET_ALL + "Sorry, there was an issue with speech recognition. {0}".format(e))
+        return ""
+
+
 
 
 if __name__=="__main__":
-    main()
+    a=listen()
+    print(a)

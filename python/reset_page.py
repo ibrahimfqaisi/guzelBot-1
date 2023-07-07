@@ -4,9 +4,15 @@ import tkinter.simpledialog as simpledialog
 from tkinter import Button, messagebox, Label, Toplevel
 import psycopg2
 import hashlib
+from PIL import ImageTk, Image
+
 import smtplib
 from email.message import EmailMessage
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+connectDatabase = os.getenv("conn")
 '''
 Ibrahim
 Bayan 
@@ -24,10 +30,10 @@ def show_custom_error(title, message):
     position_right = int(screen_width / 2 - window_width / 2)
     win.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
     win.title(title)
-    win.configure(background="#272A37")
+    win.configure(background="#6C5692")
     win.resizable(False, False)
 
-    label = Label(win, text=message, fg="white", bg="#272A37")
+    label = Label(win, text=message, fg="white", bg="#6C5692")
     label.pack(pady=20)
 
     ok_button = Button(win, text="OK", command=win.destroy)
@@ -47,19 +53,27 @@ class EntryMessageWindow:
         self.win.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
 
         self.win.title(title)
-        self.win.configure(background='#272A37')
+        self.win.configure(background='#1D3263')
         self.win.resizable(False, False)
 
-        self.email_entry = Entry(self.win, bg="#3D404B", font=("yu gothic ui semibold", 12), highlightthickness=1, bd=0)
-        self.email_entry.place(x=40, y=80, width=256, height=50)
-        self.email_entry.config(highlightbackground="#3D404B", highlightcolor="#206DB4")
-        email_label = Label(self.win, text=message, fg="#FFFFFF", bg='#272A37', font=("yu gothic ui", 11, 'bold'))
-        email_label.place(x=40, y=50)
+        home_bgImg = Image.open('python\\new\\Guzel.png')
+        home_bgImg = home_bgImg.resize((370, 360))
 
-        update_pass = Button(self.win, fg='#f8f8f8', text='submit', bg='#ff6c38', font=("yu gothic ui", 12, "bold"),
-                             cursor='hand2', relief="flat", bd=0, highlightthickness=0, activebackground="#1D90F5",
+        photo = ImageTk.PhotoImage(home_bgImg)
+        home_bg = Label(self.win, image=photo, bg='#525561')
+        home_bg.image = photo
+        home_bg.place(x=-10, y=-10)
+
+        self.email_entry = Entry(self.win, bg="#A28DCF", font=("yu gothic ui semibold", 12), highlightthickness=1, bd=0)
+        self.email_entry.place(x=40, y=110, width=256, height=50)
+        self.email_entry.config(highlightbackground="#3D404B", highlightcolor="#206DB4")
+        email_label = Label(self.win, text=message, fg="#FFFFFF", bg='#623F82', font=("yu gothic ui", 11, 'bold'))
+        email_label.place(x=20, y=50)
+
+        update_pass = Button(self.win, fg='#f8f8f8', text='submit', bg='#53A9D4', font=("yu gothic ui", 12, "bold"),
+                             cursor='hand2', relief="flat", bd=0, highlightthickness=0, activebackground="#623F82",
                              command=self.get_email)
-        update_pass.place(x=40, y=260, width=256, height=45)
+        update_pass.place(x=40, y=200, width=256, height=45)
 
         self.win.protocol("WM_DELETE_WINDOW", self.on_close)
 
@@ -74,7 +88,52 @@ class EntryMessageWindow:
 
 
 
+class EntryMessageWindow2:
+    def __init__(self, title, message):
+        self.email_value = None
 
+        self.win = Toplevel()
+        window_width = 350
+        window_height = 350
+        screen_width = self.win.winfo_screenwidth()
+        screen_height = self.win.winfo_screenheight()
+        position_top = int(screen_height / 4 - window_height / 4)
+        position_right = int(screen_width / 2 - window_width / 2)
+        self.win.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
+
+        self.win.title(title)
+        self.win.configure(background='#1D3263')
+        self.win.resizable(False, False)
+
+        home_bgImg = Image.open('python\\new\\Guzel.png')
+        home_bgImg = home_bgImg.resize((370, 360))
+
+        photo = ImageTk.PhotoImage(home_bgImg)
+        home_bg = Label(self.win, image=photo, bg='#525561')
+        home_bg.image = photo
+        home_bg.place(x=-10, y=-10)
+
+        self.email_entry = Entry(self.win, bg="#A28DCF", font=("yu gothic ui semibold", 12), highlightthickness=1, bd=0,show="*")
+        self.email_entry.place(x=40, y=110, width=256, height=50)
+        self.email_entry.config(highlightbackground="#3D404B", highlightcolor="#206DB4")
+        email_label = Label(self.win, text=message, fg="#FFFFFF", bg='#623F82', font=("yu gothic ui", 11, 'bold'))
+        email_label.place(x=20, y=50)
+
+        update_pass = Button(self.win, fg='#f8f8f8', text='submit', bg='#53A9D4', font=("yu gothic ui", 12, "bold"),
+                             cursor='hand2', relief="flat", bd=0, highlightthickness=0, activebackground="#623F82",
+                             command=self.get_email)
+        update_pass.place(x=40, y=200, width=256, height=45)
+
+        self.win.protocol("WM_DELETE_WINDOW", self.on_close)
+
+        self.win.wait_window()
+
+    def get_email(self):
+        self.email_value = self.email_entry.get()
+        self.win.destroy()
+
+    def on_close(self):
+        self.win.destroy()
 
 
 
@@ -82,7 +141,7 @@ def reset_password(reset_email_entry):
     email = reset_email_entry.get()
     
     # Connect to the PostgreSQL database
-    conn = psycopg2.connect("postgres://vfpgukpn:w4ArNUg7hh4GJkEt9Y6RK3jxzP_-ratk@ruby.db.elephantsql.com/vfpgukpn")
+    conn = psycopg2.connect(connectDatabase)
     cursor = conn.cursor()
 
     # Check if the email and security answers match in the database
@@ -100,6 +159,7 @@ def reset_password(reset_email_entry):
         # msg['From'] = 'guzel.ltuc@gmail.com'
         msg['To'] = email
         msg.set_content(f'confirmation code is: {code}')
+        
         with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
             smtp.starttls()
             smtp.login('ahmasamer51@gmail.com', 'ofqhdqbtnihfuysm')
@@ -113,7 +173,7 @@ def reset_password(reset_email_entry):
         code_confirmation = email_val
 
         if code_confirmation == code :
-            entry_window = EntryMessageWindow("Password Reset", "Enter a new password:")
+            entry_window = EntryMessageWindow2("Password Reset", "Enter a new password:")
             email_val = entry_window.email_value 
             new_password=email_val
         
