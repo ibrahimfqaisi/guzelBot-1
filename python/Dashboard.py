@@ -4,11 +4,12 @@ from tkinter import messagebox
 import os
 import about
 import login2
+from face_logIn import App
 
-'''
-Sajeda
-Firas
-'''
+# '''
+# Sajeda
+# Firas
+# '''
 
 
 
@@ -17,22 +18,17 @@ class FirstPage:
         self.dashboard_window = dashboard_window
 
         # Window Size and Placement
+        dashboard_window.state('zoomed')
         dashboard_window.rowconfigure(0, weight=1)
         dashboard_window.columnconfigure(0, weight=1)
         screen_width = dashboard_window.winfo_screenwidth()
         screen_height = dashboard_window.winfo_height()
         app_width = 1340
         app_height = 690
+        self.dashboard_window.title("Guzel Bot")
         x = (screen_width/2)-(app_width/2)
         y = (screen_height/160)-(app_height/160)
         dashboard_window.geometry(f"{app_width}x{app_height}+{int(x)}+{int(y)}")
-        
-
-        # window Icon
-        icon = PhotoImage(file='python\\images3\\1.png')
-        dashboard_window.iconphoto(True, icon)
-        dashboard_window.title('Welcome')
-
         
 
         # Navigating through windows
@@ -56,12 +52,7 @@ class FirstPage:
 
         # ====== MENU BAR ==========
         
-
-
-
-      
-
-        home_bgImg = Image.open('python\\assets\\image_1.png')
+        home_bgImg = Image.open('python\\new\\dash.png')
         home_bgImg = home_bgImg.resize((1340, 690))
 
         photo = ImageTk.PhotoImage(home_bgImg)
@@ -69,64 +60,80 @@ class FirstPage:
         home_bg.image = photo
         home_bg.place(x=-10, y=-10)
 
-        home_bgImg1 = Image.open('python\\images3\\1.png')
-        home_bgImg1 = home_bgImg1.resize((500, 500))
+        home_bgImg1 = Image.open('python\\new\\log2.png')
+        home_bgImg1= home_bgImg1.resize((160, 55))
+
         photo2 = ImageTk.PhotoImage(home_bgImg1)
-        home_bg1 = Label(homepage, image=photo2, bg='#272A37')
+        home_bg1 = Label(homepage, image=photo2, )
         home_bg1.image = photo2
-        home_bg1.place(x=200, y=240)
+        
       
        
+        home_bgImg2 = Image.open('python\\new\\face.png')
+        home_bgImg2= home_bgImg2.resize((160, 55))
 
-        heading2 = Label(homepage, text='GUZL DASHBOARD', bg='#272A37', fg='#ff6c38', font=("", 30, "bold"))
-        heading2.place(x=250, y=195)
-
+        photo3 = ImageTk.PhotoImage(home_bgImg2)
+        home_bg2 = Label(homepage, image=photo3, )
+        home_bg2.image = photo3
 
 
         
-         
-       
-        
-       
-
-        # ========== HOME BUTTON =======
-        home_button = Button(homepage, text='Home', bg='#272A37', font=("", 20, "bold"), bd=0, fg='white',
-                             cursor='hand2', activebackground='#fd6a36', activeforeground='white')
-        home_button.place(x=150, y=100)
-
-        def about():
-            pass
-
-        def chat():
-            pass
-
-        # ========== chat BUTTON =======
-        chat_button = Button(homepage, text='chat', bg='#272A37', font=("", 20, "bold"), bd=0, fg='white',
-                               cursor='hand2', activebackground='#fd6a36', activeforeground='#7a7a7a',command=chat
-                               )
-        chat_button.place(x=250, y=100)
-
-        # ========== about  BUTTON =======
-        about_button = Button(homepage, text='About us', bg='#272A37', font=("", 20, "bold"), bd=0, fg='white',
-                                cursor='hand2', activebackground='#fd6a36', activeforeground='#7a7a7a',
-                                command=about)
-        about_button.place(x=350, y=100)
-
-       
-
         def login():
             dashboard_window.withdraw()
             os.system("python python\\login2.py")
-            dashboard_window.destroy()
+        
+        logoin_button = Button(
+            homepage,
+            image=photo2, 
+            borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat",
+            command=login
             
-        # ========== LOG OUT =======
-        logout_button = Button(homepage, text='Login', bg='#272A37', font=("", 20, "bold"), bd=0, fg='white',
-                               cursor='hand2', activebackground='#fd6a36', activeforeground='#7a7a7a',command=login)
-        logout_button.place(x=500, y=100)
+            )
+        logoin_button.place(x=110, y=490,) 
+        def face():
+            
+            dashboard_window.destroy()
+            app = App()
+            app.start()
+            
+            file_path = 'userinfo.txt'
+            try:
+                with open(file_path, 'r') as file:
+                    str_userinfo = file.read()
+                os.system("python python\\home.py")
+                
+            except:
+                messagebox.showinfo("sign in using email", "face didn't find")
+                file_path1 = 'most_emotion.txt'
+                if os.path.exists(file_path1):
+                    os.remove(file_path1)                 
+                page()
+
+
+        face_button = Button(
+            homepage,
+            image=photo3, 
+            borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat",
+            command=face
+    
+            )
+        face_button.place(x=310, y=490,)
+    
+
+        
+
+      
 
 
 def page():
     window = Tk()
+    window.title("Guzel Bot")
     FirstPage(window)
     window.mainloop()
 

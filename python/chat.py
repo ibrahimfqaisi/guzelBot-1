@@ -1,20 +1,55 @@
 import tkinter as tk
+from tkinter import *
 from tkinter import messagebox
 from tkinter import Tk, Button
 from PIL import Image, ImageTk
+from face_register import App
 import os
+from chatbot import chatbot1
+# import run
+from run import voice_text_qu, text_ans , say_ans
+import psycopg2
+import os
+from dotenv import load_dotenv
+from tkinter import Tk, Button, Listbox, Scrollbar
 
-'''
-Ibrahim
-Mohammad 
-Aseel
-'''
+load_dotenv()
+connectDatabase = os.getenv("conn")
 
-# Define colors
-BACKGROUND_COLOR = "#525561"   # Facebook blue
-LISTBOX_COLOR = "black"      # White
-ENTRY_COLOR = "black"        # Light blue-gray
-SEND_BUTTON_COLOR = "#6f5383"  # Facebook blue
+
+def toggle_microphone():
+    question =voice_text_qu()
+    answer = text_ans(question)
+    # Read the contents of the file
+    file_path = 'userinfo.txt'
+    with open(file_path, 'r') as file:
+        str_userinfo = file.read()
+        userinfo=str_userinfo.split(",")
+        userId=userinfo[0]
+        userName=userinfo[1]
+   
+
+    # Display the voice input and bot's response in the chat box
+    receive_message(f"{question}", align="left")
+    receive_message( answer, align="right")
+
+
+
+    say_ans(answer)
+
+    if userId:
+        
+        conn = psycopg2.connect(connectDatabase)
+        cursor = conn.cursor()   
+        query = "INSERT INTO search_history (user_id, question, answer) VALUES (%s, %s, %s)"
+        cursor.execute(query, (userId,  question, answer))
+        conn.commit()
+        conn.close()  
+
+# def exit_application():
+#     # Add your code here to exit the application
+#     # This can include closing any open resources or windows
+#     window.destroy()
 
 def send_message(event=None):  # Updated function with event parameter
     message = entry.get()
@@ -25,15 +60,18 @@ def send_message(event=None):  # Updated function with event parameter
         with open(file_path, 'r') as file:
             str_userinfo = file.read()
             userinfo=str_userinfo.split(",")
-            userId=userinfo[1]
+            userId=userinfo[0]
+            userName=userinfo[1]
+
         if userId:
         # Display user's message
-            listbox.insert(tk.END, "You: " + message)
-            
+            receive_message(f"{message}", align="left")
+
+            answer = chatbot1(message)
             # Process the user's message with the bot
             # Replace the code below with your bot's logic
-            response = "Bot: Sorry, I am a basic bot and cannot respond."
-            conn = psycopg2.connect("postgres://vfpgukpn:w4ArNUg7hh4GJkEt9Y6RK3jxzP_-ratk@ruby.db.elephantsql.com/vfpgukpn")
+            response = answer 
+            conn = psycopg2.connect(connectDatabase)
             cursor = conn.cursor()   
             query = "INSERT INTO search_history (user_id, question, answer) VALUES (%s, %s, %s)"
             cursor.execute(query, (userId,  message, response))
@@ -41,14 +79,67 @@ def send_message(event=None):  # Updated function with event parameter
             conn.close()                   
 
             # Display bot's response
-            listbox.insert(tk.END, response)
+            receive_message( response, align="right")
+
             entry.delete(0, tk.END)
     else:
         messagebox.showwarning("Warning", "Please enter a message.")
 
 # Create the main window
-import psycopg2
+window = Tk()
+window.title("Chat")
+window_width = 1340
+window_height = 690
+screen_width = window.winfo_screenwidth()
+screen_height = window.winfo_screenheight()
+x = (screen_width - window_width) // 2
+y = (screen_height - window_height) // 2
+window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+window.configure(bg="#525561")
+window.geometry('1340x690')
 
+background_image = Image.open("python\\new\\Guzel (10).png")
+background_image = background_image.resize((1340, 690))
+background_photo = ImageTk.PhotoImage(background_image)
+
+# Create a label to hold the background image
+background_label = tk.Label(window, image=background_photo)
+background_label.place(x=0, y=0)
+
+
+home_bgImg1 = Image.open('python\\new\\homentn.png')
+home_bgImg1= home_bgImg1.resize((130, 46))
+photo2 = ImageTk.PhotoImage(home_bgImg1)
+home_bg1 = Label(window, image=photo2, bg='#272A37')
+home_bg1.image = photo2
+      
+home_bgImg2 = Image.open('python\\new\\chatbtn.png')
+home_bgImg2= home_bgImg2.resize((130, 46))
+photo3 = ImageTk.PhotoImage(home_bgImg2)
+home_bg2 = Label(window, image=photo3, bg='#272A37')
+home_bg2.image = photo3
+
+
+home_bgImg3 = Image.open('python\\new\\facid.png')
+home_bgImg2= home_bgImg2.resize((90,37))
+photo4 = ImageTk.PhotoImage(home_bgImg3)
+home_bg3 = Label(window, image=photo4, )
+home_bg3.image = photo4
+      
+home_bgImg4 = Image.open('python\\new\\aboutbtn.png')
+home_bgImg2= home_bgImg2.resize((90,37))
+photo5 = ImageTk.PhotoImage(home_bgImg4)
+home_bg4 = Label(window, image=photo5, )
+home_bg4.image = photo5
+       
+home_bgImg5 = Image.open('python\\new\\logout.png')
+home_bgImg2= home_bgImg2.resize((90, 37))
+photo6 = ImageTk.PhotoImage(home_bgImg5)
+home_bg5 = Label(window, image=photo6, )
+home_bg5.image = photo6
+
+
+        
 def history():
     file_path = 'userinfo.txt'
 
@@ -57,10 +148,10 @@ def history():
         with open(file_path, 'r') as file:
             str_userinfo = file.read()
             userinfo=str_userinfo.split(",")
-            username=userinfo[0]
+            username=userinfo[1]
         if username:
             # Connect to the PostgreSQL database
-            conn = psycopg2.connect("postgres://vfpgukpn:w4ArNUg7hh4GJkEt9Y6RK3jxzP_-ratk@ruby.db.elephantsql.com/vfpgukpn")
+            conn = psycopg2.connect(connectDatabase)
             cursor = conn.cursor()
 
             # Retrieve the user's question and corresponding answer from the database
@@ -72,11 +163,12 @@ def history():
 
             if results:
                 for username, question, answer, search_date in results:
-                    listbox.insert(tk.END, f"User: {question}")
-                    listbox.insert(tk.END, f"Bot: {answer}")
-            else:
-                listbox.insert(tk.END, "No history found.")
+                    receive_message(f"{question}", align="left")
 
+                     # Display bot's response
+                    receive_message( answer, align="right")
+            # else:
+            #     receive_message( "No history found.", align="right")
 
             # Close the database connection
             conn.close()
@@ -84,88 +176,161 @@ def history():
             # Clear the entry field
             entry.delete(0, tk.END)
     except:
-        window.destroy()
-def delet_info():
-    window.destroy()  
+        window.destroy()        
+       
+        
+def faceId():
+    window.destroy()
+    app = App()
+    app.start() 
+    os.system("python python\\home.py")
+                
+def Dashboard():
+    window.withdraw()
     file_path = 'userinfo.txt'
     os.remove(file_path)
-    os.system("python python/chat.py")
-   
-    
-window = tk.Tk()
-window.title("GuzelBot App")
-window_width = 1340 # Set the desired width of the window
-window_height = 690  # Set the desired height of the window
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-x = (screen_width - window_width) // 2
-y = (screen_height - window_height) // 2
-window.geometry(f"{window_width}x{window_height}+{x}+{y}")
-window.configure(bg="#525561")
-window.geometry('1340x690')
+    os.system("python python\\Dashboard.py")
+    window.destroy()
 
-image = Image.open("python\\assets\\image_1.png")
 
-# Resize the image to 1430x690
-resized_image = image.resize((1430, 690),)
+def about():
+    window.withdraw()
+    os.system("python python\\about.py")
+    window.destroy()
+def chat():
+    window.withdraw()
+    os.system("python python\\chat.py")
+    window.destroy()
 
-# Convert the resized image to PhotoImage
-Login_backgroundImage = ImageTk.PhotoImage(resized_image)
+def home():
+    window.withdraw()
+    os.system("python python\\home.py")
+    window.destroy()
+       
 
-# Create the label with the resized image
-bg_imageLogin = tk.Label(
-    window,
-    image=Login_backgroundImage,
-    bg="#525561"
-)
-bg_imageLogin.place(x=-10, y=-7)
+        # ========== HOME BUTTON =======
+home_button = Button(
+         window, 
+            image=photo2, 
+            borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat",
+            command= home,
+            )
+home_button.place(x=140, y=40)
 
-# Load the image file
-image = Image.open("python\\images2/send-message.png")
-image = image.resize((40, 40))  # Resize the image to 20x20 pixels
+
+        # ========== chat BUTTON =======
+chat_button = Button(
+            window, 
+            image=photo3,
+            borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat" ,
+                    )
+chat_button.place(x=300, y=40)
+
+
+
+         # ========== face  BUTTON =======
+face_button = Button(window,image=photo4 , borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat" ,
+            command=faceId)
+face_button.place(x=765, y=40)
+
+        # ========== about  BUTTON =======
+about_button = Button(
+            window, 
+            image=photo5,
+            borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat" ,         
+            command=about)
+about_button.place(x=460, y=40)
+        
+     
+            
+        # ========== LOG OUT =======
+logout_button = Button(window,  image=photo6,
+            borderwidth=0,
+            highlightthickness=0,
+            cursor='hand2',
+            relief="flat" , 
+            command=Dashboard)
+logout_button.place(x=1000, y=40)
+
+
+
+
+
+
+
+
+
+display = tk.Text(window, height=20, width=63,bg='#73609B', fg="black", wrap=tk.WORD,font=("yu gothic ui SemiBold", 12))
+display.place(x=640, y=110)
+
+# Create a frame to hold the image and entry widget
+enter_img1=Image.open("python\\new\\label.png")
+enter_img1=enter_img1.resize((430,60))
+enter_photo1=ImageTk.PhotoImage(enter_img1)
+image_label1 = tk.Label(window, image=enter_photo1,bg='#40508a')
+image_label1.place(x=660, y=540)
+
+
+
+entry = Entry(image_label1,width=35, font=("yu gothic ui SemiBold", 15),bg=("#6f6caa"))
+entry.place(x=20, y=15)
+
+image = Image.open("python\\new\\send.png")
+image = image.resize((40, 40))
 photo = ImageTk.PhotoImage(image)
 
-image = Image.open("python\\images2/logout.png")
-image = image.resize((40, 40))  # Resize the image to 20x20 pixels
+image = Image.open("python\\new\\exit.png")
+image = image.resize((40, 40))
 photo1 = ImageTk.PhotoImage(image)
 
-
-image = Image.open("python\\images2/mic.png")
-image = image.resize((40, 40))  # Resize the image to 20x20 pixels
+image = Image.open("python\\new\\mic.png")
+image = image.resize((40, 40))
 photo2 = ImageTk.PhotoImage(image)
 
+# Create a send button to trigger the send_message function
+send_button = tk.Button(window, image=photo, text="Send", command=send_message, height=40, width=40, bg='#40508a')
+send_button.place(x=1100, y=550)
 
+# Create a microphone button to trigger the toggle_microphone function
+mic_button = tk.Button(window, image=photo2, text="Microphone", command=toggle_microphone, height=40, width=40, bg='#40508a')
+mic_button.place(x=1150, y=550)
 
+# Create an exit button to trigger the exit_application function
+# exit_button = tk.Button(window, image=photo1, text="Exit", command=exit_application, height=40, width=40, bg='#424E83')
+# exit_button.place(x=1050, y=550)
 
+display.tag_configure("left", justify="left")
+display.tag_configure("right", justify="right")
 
+bot_image = Image.open("python\\new\\robot.png") 
+bot_image = bot_image.resize((40, 40))
+bot_photo = ImageTk.PhotoImage(bot_image)
+def receive_message(message, align="left"):
+    if align == "left":
+        display.tag_configure("left", justify="left", foreground="snow",background="#5875BB")
+        display.insert(tk.END, message + "\n", "right")
+    else:
+        display.image_create(tk.END, image=bot_photo)
+        display.insert(tk.END, " ", "left")
+        display.tag_configure("right", justify="right", foreground="snow")
+        display.insert(tk.END, message + "\n", "left")
 
-# Create a listbox to display messages
-listbox = tk.Listbox(window,bg='#272A37',fg='white',bd=10,borderwidth=9,font=("", 15, "bold"))
-listbox.pack(padx=300, pady=40, fill="x", expand=True)
+    # Scroll to the end of the display
+    display.see(tk.END)
 
-
-entry = tk.Entry(window, bg="#272A37",fg='white',width=6,bd=10,borderwidth=9,font=("", 15, "bold"))
-entry.pack(padx=300, pady=10, fill="x",)
-entry.bind("<Return>", send_message)  # Bind the Return key to send_message function
 history()
 
-
-
-# Create a frame for the buttons
-button_frame = tk.Frame(window, bg="#272A37",bd=30,borderwidth=9)
-button_frame.pack(padx=300,pady=50)
-
-# Create a send button
-send_button = tk.Button(button_frame, image=photo, command=send_message, height=40, width=40)
-send_button.pack(side="left",pady=20,padx=20)
-
-# Create a quit button
-
-# Create a mic button
-mic_button = tk.Button(button_frame, image=photo2, height=40, width=40)
-mic_button.pack(side="left",  padx=20)
-
-quit_button = tk.Button(button_frame, image=photo1, command=delet_info, height=40, width=40)
-quit_button.pack(side="left", padx=50)
-
+# Run the main loop
 window.mainloop()
